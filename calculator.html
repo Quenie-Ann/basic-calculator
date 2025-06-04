@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Calculator</title>
+    <link rel="stylesheet" href="calc-style.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('(')">(</button>
+            <button onclick="appendToDisplay(')')">)</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('*')">×</button>
+            
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="backspace()">⌫</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById("display");
+        let currentInput = "0";
+        let shouldReset = false;
+
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+
+        function appendToDisplay(value) {
+            if (currentInput === "0" || shouldReset) {
+                currentInput = value;
+                shouldReset = false;
+            } else {
+                currentInput += value;
+            }
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentInput = "0";
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (currentInput.length === 1) {
+                currentInput = "0";
+            } else {
+                currentInput = currentInput.slice(0, -1);
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                const expression = currentInput.replace(/×/g, '*');
+                const result = eval(expression);
+                
+                if (isNaN(result) || !isFinite(result)) {
+                    currentInput = "Error";
+                } else {
+                    currentInput = result.toString();
+                }
+                shouldReset = true;
+                updateDisplay();
+            } catch {
+                currentInput = "Error";
+                updateDisplay();
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key >= '0' && event.key <= '9') {
+                appendToDisplay(event.key);
+            } else if (event.key === '.') {
+                appendToDisplay('.');
+            } else if (event.key === '+' || event.key === '-' || event.key === '*') {
+                appendToDisplay(event.key);
+            } else if (event.key === '/') {
+                appendToDisplay('/');
+            } else if (event.key === 'Enter' || event.key === '=') {
+                calculate();
+            } else if (event.key === 'Escape') {
+                clearDisplay();
+            } else if (event.key === 'Backspace') {
+                backspace();
+            } else if (event.key === '(' || event.key === ')') {
+                appendToDisplay(event.key);
+            }
+        });
+    </script>
+</body>
+</html>
